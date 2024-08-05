@@ -1,0 +1,18 @@
+Package: easySCFr
+Type: Package
+Title: easySCFr tools
+Version: 0.2.0
+Description: easySCFr tools
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    httr
+RoxygenNote: 7.3.2
+Authors@R: c(
+    person("Lei Cui", "Developer", , "cuilei798@qq.com", role = c("aut", "ctr", "cph", "cre")),
+    person("An Qin", "Researcher", role = c("fnd", "ths")),
+    person("Feng Jiang", "Engineer", role = c("ctb"))
+  )
+BugReports: https://github.com/xleizi/easySCFr/issues
+URL: https://github.com/xleizi/easySCFr.git
