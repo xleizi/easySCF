@@ -1,0 +1,11 @@
+README.md
+setup.py
+easySCFpy/__init__.py
+easySCFpy/load.py
+easySCFpy/save.py
+easySCFpy.egg-info/PKG-INFO
+easySCFpy.egg-info/SOURCES.txt
+easySCFpy.egg-info/dependency_links.txt
+easySCFpy.egg-info/not-zip-safe
+easySCFpy.egg-info/requires.txt
+easySCFpy.egg-info/top_level.txt

@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: easySCFpy
+Version: 0.2.2
+Summary: The easySCFpy is a Python package for transformating single-cell data.
+Home-page: https://github.com/xleizi/easySCFpy
+Author: Lei Cui
+Author-email: cuilei798@qq.com
+Maintainer: Lei Cui
+Maintainer-email: cuilei798@qq.com
+License: MIT License
+Platform: linux
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3
+
+# easySCFpy
+easySCFpy
+
+
