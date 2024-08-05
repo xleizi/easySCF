@@ -5,11 +5,12 @@
 \title{saveH5}
 \usage{
 saveH5(
-  FileName,
   data,
+  FileName,
   assay = "RNA",
   save_graph = TRUE,
   SeuratVersion = checkSeuratVersion(),
+  image_name = NULL,
   split_save = TRUE,
   max_cells_per_subset = 5000
 )

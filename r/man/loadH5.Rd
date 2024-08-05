@@ -8,6 +8,7 @@ loadH5(
   FileName,
   assay = "RNA",
   SeuratVersion = checkSeuratVersion(),
+  image_name = "Spatial",
   useBPcells = FALSE,
   useDisk = TRUE,
   calData = TRUE,
