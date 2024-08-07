@@ -346,6 +346,9 @@ Seurat_to_H5 <- function(h5, sce, assay = "RNA",
 
 images_to_h5 <- function(sce, h5obj, image_name = NULL) {
   sceimages <- sce@images
+  if(is.null(sceimages)){
+    return(NULL)
+  }
   if (length(sceimages) > 0) {
     if (!is.null(image_name)) {
       sceimage <- sceimages[[image_name]]

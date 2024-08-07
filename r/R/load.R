@@ -516,8 +516,9 @@ h5_to_seurat <- function(h5,
   print("Add images...")
   if ("images" %in% names(h5)) {
     images <- h5_to_images(h5[["images"]], assay, image_name = image_name, cellNames = cellNames)
+    sce@images[[image_name]] <- images
   }
-  sce@images[[image_name]] <- images
+  
   return(sce)
 }
 
