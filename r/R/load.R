@@ -10,7 +10,6 @@ read_matrice_matrix <- function(h5data) {
       Matrix::t(Matrix::sparseMatrix(j = i, p = p, x = x, dims = getShape(h5data), index1 = FALSE))
     }
 
-
     return(X)
   } else {
     return(h5data[])
@@ -151,29 +150,48 @@ h5_to_uns <- function(h5obj) {
   if (is(h5obj, "H5Group")) {
     keys <- names(h5obj)
     for (key in keys) {
-      # 递归读取
-      data[[key]] <- h5_to_uns(h5obj[[key]])
-    }
-  } else { # h5obj 是数据集
-    item <- h5obj[]
-    if (is.raw(item[1])) {
-      item_text <- rawToChar(item)
-      # 尝试将内容作为 JSON 解析，否则保持原样
-      data <- tryCatch(
+      # 使用 tryCatch 跳过报错项
+      tryCatch(
         {
-          jsonlite::fromJSON(item_text)
+          data[[key]] <- h5_to_uns(h5obj[[key]])
         },
         error = function(e) {
-          item_text
+          message(paste("Error processing key:", key, "-", e$message))
         }
       )
-    } else {
-      data <- item
+    }
+  } else { # h5obj 是数据集
+    item <- tryCatch(
+      {
+        h5obj[]
+      },
+      error = function(e) {
+        message(paste("Error reading dataset:", e$message))
+        NULL
+      }
+    )
+
+    if (!is.null(item)) {
+      if (is.raw(item[1])) {
+        item_text <- rawToChar(item)
+        # 尝试将内容作为 JSON 解析，否则保持原样
+        data <- tryCatch(
+          {
+            jsonlite::fromJSON(item_text)
+          },
+          error = function(e) {
+            message("Error parsing JSON - returning raw text")
+            item_text
+          }
+        )
+      } else {
+        data <- item
+      }
     }
   }
-
   return(data)
 }
+
 
 h5_to_obs <- function(h5, obsName = "obs") {
   return(h5_to_DF(h5[["obs"]]))
@@ -518,7 +536,6 @@ h5_to_seurat <- function(h5,
     images <- h5_to_images(h5[["images"]], assay, image_name = image_name, cellNames = cellNames)
     sce@images[[image_name]] <- images
   }
-  
   return(sce)
 }
 
