@@ -156,7 +156,7 @@ h5_to_uns <- function(h5obj) {
           data[[key]] <- h5_to_uns(h5obj[[key]])
         },
         error = function(e) {
-          message(paste("Error processing key:", key, "-", e$message))
+          message(paste("message: Error processing key:", key, "-", e$message))
         }
       )
     }
@@ -166,7 +166,7 @@ h5_to_uns <- function(h5obj) {
         h5obj[]
       },
       error = function(e) {
-        message(paste("Error reading dataset:", e$message))
+        message(paste("message: Error reading dataset:", e$message))
         NULL
       }
     )
@@ -180,7 +180,7 @@ h5_to_uns <- function(h5obj) {
             jsonlite::fromJSON(item_text)
           },
           error = function(e) {
-            message("Error parsing JSON - returning raw text")
+            message("message: Error parsing JSON - returning raw text")
             item_text
           }
         )
