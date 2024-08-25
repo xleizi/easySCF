@@ -1,6 +1,6 @@
 
 # README
-中文版[这里](https://github.com/xleizi/easySCF/tree/main/README_zh.md)
+中文版[这里](https://github.com/xleizi/easySCF/tree/main/README_cn.md)
 
 This document describes how to perform file read and write operations in R and Python. In both R and Python, read and write operations are straightforward and can be accomplished with just one line of code.
 
