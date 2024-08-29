@@ -3,6 +3,19 @@
 
 本文档介绍了如何在 R 和 Python 中进行文件读写操作。在 R 中和 Python 中的读写操作都很简单，均只需使用一句代码即可完成。
 
+## 安装 easySCF
+
+在 R 和 Python 中，你可以使用以下命令安装 easySCF：
+
+```R
+install.packages("devtools")
+devtools::install_github("xleizi/easySCF/r")
+```
+
+```python
+!pip install easySCFpy
+```
+
 ## R 中的读写
 
 ### R 中的读取
