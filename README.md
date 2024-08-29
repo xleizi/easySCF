@@ -4,6 +4,22 @@
 
 This document describes how to perform file read and write operations in R and Python. In both R and Python, read and write operations are straightforward and can be accomplished with just one line of code.
 
+## Install easySCF
+
+To install easySCF, you can use the following code:
+
+```R
+# Install easySCF in R
+install.packages("devtools")
+devtools::install_github("xleizi/easySCF/r")
+```
+
+
+```python
+# Install easySCF in Python
+!pip install easySCFpy
+```
+
 ## Read and Write in R
 
 ### Reading in R
@@ -75,7 +91,7 @@ Parameter explanation:
 Here is a simple example demonstrating how to use these functions:
 
 ```python
-from easySCF import loadH5
+from easySCFpy import loadH5
 sce = loadH5("data.h5")
 ```
 
@@ -101,6 +117,6 @@ Parameter explanation:
 Here is a simple example demonstrating how to use these functions:
 
 ```python
-from easySCF import saveH5
+from easySCFpy import saveH5
 saveH5(sce, "data.h5")
 ```
