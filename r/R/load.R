@@ -509,7 +509,7 @@ h5_to_seurat <- function(h5,
 
   print("Add reductions...")
   # reductions
-  if ("reductions" %in% names(h5)) {
+  if ("reductions" %in% names(h5) && length(names(h5[["reductions"]])) > 0) {
     sce <- sce_add_h5_to_reductions(sce, h5, cellNames, assay, reductionsName = "reductions")
   }
 
