@@ -308,6 +308,11 @@ Seurat_to_H5 <- function(h5, sce, assay = "RNA",
   print("Saving obs ...")
   meta <- sce@meta.data
   meta <- meta[colnames(rawData), ]
+  for(col in colnames(meta)){
+    if(any(is.na(meta[[col]]))){
+        meta[[col]] <- "N/A"
+    }
+  }
   obs <- h5$create_group("obs")
   df_to_h5(obs, meta)
 
