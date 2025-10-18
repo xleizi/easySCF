@@ -123,7 +123,7 @@ h5_to_DF <- function(h5data) {
   }
   if ("column-order" %in% hdf5r::h5attr_names(h5data)) {
     colnamesOrder <- hdf5r::h5attr(h5data, "column-order")
-    df <- df[, colnamesOrder]
+    df <- df[, colnamesOrder, drop = FALSE]
   }
 
   return(df)
