@@ -114,7 +114,12 @@ h5_to_DF <- function(h5data) {
     df <- addDF(df, setNames(data.frame(values), name), "col")
   }
   if (!is.null(rownamesStr)) {
-    rownames(df) <- rownamesStr
+    if (nrow(df) == 0 && ncol(df) == 0) {
+      # 如果 df 是空的,创建一个占位 data.frame
+      df <- data.frame(row.names = rownamesStr)
+    } else {
+      rownames(df) <- rownamesStr
+    }
   }
   if ("column-order" %in% hdf5r::h5attr_names(h5data)) {
     colnamesOrder <- hdf5r::h5attr(h5data, "column-order")
