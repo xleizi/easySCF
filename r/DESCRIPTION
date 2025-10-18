@@ -1,7 +1,11 @@
 Package: easySCFr
 Type: Package
 Title: easySCFr tools
+<<<<<<< HEAD
 Version: 0.2.2.3
+=======
+Version: 0.2.2.5
+>>>>>>> 664abd6 (0.2.2.5)
 Description: easySCFr tools
 License: MIT + file LICENSE
 Encoding: UTF-8
