@@ -17,6 +17,11 @@ def read_dense_matrix(h5_group):
     for key in h5_group.keys():
         sub_matrix = read_elem(h5_group[key])
         denses.append(sub_matrix)
+
+    # 如果只有一个矩阵，直接返回，避免不必要的 vstack
+    if len(denses) == 1:
+        return denses[0]
+
     if h5_group.attrs.get("encoding-type") == "csr_matrix":
         matrix = sparse.vstack(denses, format="csr")
     elif h5_group.attrs.get("encoding-type") == "csc_matrix":
@@ -31,6 +36,10 @@ def read_matrice_matrix(h5_group, sparse_format):
     for key in h5_group.keys():
         sub_matrix = read_elem(h5_group[key])
         matrices.append(sub_matrix)
+
+    # 如果只有一个矩阵，直接返回，避免不必要的 vstack
+    if len(matrices) == 1:
+        return matrices[0]
 
     if sparse_format == sparse.csr_matrix:
         matrices = sparse.vstack(matrices, format="csr")
@@ -192,7 +201,11 @@ def read_h5_to_scanpy(
             else:
                 raise KeyError("Layers not found.")
         except Exception as e:
-            raise KeyError("assay not found.")
+            import traceback
+            print(f"详细错误信息: {e}")
+            print(f"错误类型: {type(e).__name__}")
+            traceback.print_exc()
+            raise e
         print("Reading reductions data")
         if "reductions" in h5.keys():
             adata.obsm = read_elem(h5["reductions"])
