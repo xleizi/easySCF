@@ -11,6 +11,52 @@ from pathlib import Path
 from typing import Literal
 
 
+def read_dataframe_compat(h5_group):
+    """
+    兼容读取 DataFrame，支持旧版本文件中字符串格式的 column-order。
+
+    :param h5_group: h5py.Group 对象，包含 DataFrame 数据
+    :return: pandas DataFrame
+    """
+    import pandas as pd
+    from anndata._io.specs import read_elem
+
+    if not isinstance(h5_group, h5py.Group):
+        raise TypeError("Expected h5py.Group")
+
+    # 检查 column-order 属性
+    col_order = h5_group.attrs.get('column-order')
+
+    # 如果 column-order 是字符串（旧格式），手动读取
+    if isinstance(col_order, str):
+        columns = [col_order]
+    elif isinstance(col_order, bytes):
+        columns = [col_order.decode('utf-8')]
+    elif isinstance(col_order, np.ndarray):
+        # 正常格式，使用标准读取函数
+        return read_dataframe(h5_group)
+    else:
+        # 没有 column-order 或其他格式，尝试标准读取
+        return read_dataframe(h5_group)
+
+    # 手动读取 DataFrame（处理字符串格式的 column-order）
+    # 读取索引
+    if '_index' in h5_group:
+        index = read_elem(h5_group['_index'])
+        if isinstance(index[0], bytes):
+            index = [x.decode('utf-8') for x in index]
+    else:
+        index = None
+
+    # 读取每一列数据
+    data = {}
+    for col in columns:
+        if col in h5_group:
+            data[col] = read_elem(h5_group[col])
+
+    return pd.DataFrame(data, index=index)
+
+
 def read_dense_matrix(h5_group):
     print("Reading dense matrix")
     denses = []
@@ -169,9 +215,9 @@ def read_h5_to_scanpy(
                     rawData = h5_to_X(
                         layers, "rawdata", as_sparse, as_sparse_fmt, chunk_size
                     )
-                    obs = read_dataframe(h5["obs"])
+                    obs = read_dataframe_compat(h5["obs"])
                     obs = obs if obs.shape[0] != 0 and obs.shape[1] != 0 else None
-                    var = read_dataframe(h5["var/var"])
+                    var = read_dataframe_compat(h5["var/var"])
                     var = var if var.shape[0] != 0 and var.shape[1] != 0 else None
                     adata = AnnData(
                         X=data,
@@ -179,9 +225,9 @@ def read_h5_to_scanpy(
                         var=var,
                     )
 
-                    obs = read_dataframe(h5["obs"])
+                    obs = read_dataframe_compat(h5["obs"])
                     obs = obs if obs.shape[0] != 0 and obs.shape[1] != 0 else None
-                    var = read_dataframe(h5["var/rawvar"])
+                    var = read_dataframe_compat(h5["var/rawvar"])
                     var = var if var.shape[0] != 0 and var.shape[1] != 0 else None
                     adata_raw = AnnData(
                         X=rawData,
@@ -195,8 +241,8 @@ def read_h5_to_scanpy(
                     )
                     adata = AnnData(
                         X=rawData,
-                        obs=read_dataframe(h5["obs"]),
-                        var=read_dataframe(h5["var/rawvar"]),
+                        obs=read_dataframe_compat(h5["obs"]),
+                        var=read_dataframe_compat(h5["var/rawvar"]),
                     )
             else:
                 raise KeyError("Layers not found.")
