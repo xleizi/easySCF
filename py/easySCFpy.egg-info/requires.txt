@@ -1,4 +1,4 @@
 anndata
 h5py
-numpy
 scipy
+numpy

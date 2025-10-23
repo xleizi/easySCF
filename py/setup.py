@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-VERSION = '0.2.2'
+VERSION = '0.2.3'
 
 setup(
     name="easySCFpy",  # package name
@@ -15,6 +15,7 @@ setup(
     url="https://github.com/xleizi/easySCFpy",
     description="The easySCFpy is a Python package for transformating single-cell data.",
     long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     zip_safe=False,
     # entry_points={

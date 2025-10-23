@@ -1,13 +1,34 @@
 df_to_h5 <- function(h5data, df) {
-  if (nrow(df) == 0 | ncol(df) == 0) {
+  # 如果行数为 0,直接返回
+  if (nrow(df) == 0) {
     return(NULL)
   }
+
+  # 即使列数为 0,也保存 index (rownames)
+  # 这对于 var/rawvar 非常重要,确保基因名称不会丢失
   h5AddAttribute(h5data, "encoding-type", "dataframe")
   h5AddAttribute(h5data, "shape", dim(df))
-  h5AddAttribute(h5data, "column-order", colnames(df))
+
+  # 如果有列,保存 column-order;否则保存空数组
+  if (ncol(df) > 0) {
+    h5AddAttribute(h5data, "column-order", colnames(df))
+  } else {
+    # 对于空 DataFrame,保存空数组作为 column-order
+    h5AddAttribute(h5data, "column-order", character(0))
+  }
+
   h5AddAttribute(h5data, "_index", "_index")
   h5AddAttribute(h5data, "encoding-version", "0.2.0")
+
+  # 始终保存 index,即使 DataFrame 没有列
   h5dfAddIndex(h5data, df)
+
+  # 如果没有列,直接返回
+  if (ncol(df) == 0) {
+    return(invisible(NULL))
+  }
+
+  # 保存每一列的数据
   for (name in colnames(df)) {
     if (name == "_index") {
       next
@@ -295,7 +316,16 @@ Seurat_to_H5 <- function(h5, sce, assay = "RNA",
 
   rawvarh5 <- varList$create_group("rawvar")
   rawvar <- slot(object = sce@assays[[assay]], name = varObjName)
-  rownames(rawvar) <- rownames(sce@assays[[assay]])
+
+  # 如果 rawvar 为 NULL 或是空 DataFrame,创建一个只有 rownames 的空 DataFrame
+  # 这确保即使没有 feature metadata,也能保存基因名称
+  if (is.null(rawvar) || nrow(rawvar) == 0 || ncol(rawvar) == 0) {
+    rawvar <- data.frame(row.names = rownames(sce@assays[[assay]]))
+  } else {
+    # 确保 rownames 正确
+    rownames(rawvar) <- rownames(sce@assays[[assay]])
+  }
+
   df_to_h5(rawvarh5, rawvar)
 
   if (!is.null(Seurat::VariableFeatures(sce))) {
