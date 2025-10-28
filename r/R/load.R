@@ -459,7 +459,12 @@ h5_to_seurat <- function(h5,
   } else {
     if ("data" %in% layersNames) {
       print("load features from h5 file")
-      Seurat::VariableFeatures(sce) <- rownames(h5_to_DF(h5[["var"]][["var"]]))
+      # 检查 var/var 是否存在，不存在则跳过设置 VariableFeatures
+      if ("var" %in% names(h5[["var"]])) {
+        Seurat::VariableFeatures(sce) <- rownames(h5_to_DF(h5[["var"]][["var"]]))
+      } else {
+        print("var/var not found in h5 file, skipping VariableFeatures loading")
+      }
     } else {
       print("there is no features in h5 files and calFeatures is FALSE, please set 'calFeatures = TRUE' to calculate features")
     }

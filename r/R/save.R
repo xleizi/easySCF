@@ -328,10 +328,21 @@ Seurat_to_H5 <- function(h5, sce, assay = "RNA",
 
   df_to_h5(rawvarh5, rawvar)
 
+  # 检查是否有标准化数据（data 层）但没有 VariableFeatures
+  hasScaleData <- (nrow(scaleData) > 0 && ncol(scaleData) > 0)
+
   if (!is.null(Seurat::VariableFeatures(sce))) {
     var <- rawvar[rownames(rawvar) %in% Seurat::VariableFeatures(sce), ]
     varh5 <- varList$create_group("var")
     df_to_h5(varh5, var)
+  } else if (hasScaleData) {
+    # 有标准化数据但没有 VariableFeatures，输出警告
+    warning(
+      "H5 file contains normalized/scaled data (data layer) but no VariableFeatures. ",
+      "The 'var/var' metadata will not be saved, which may cause compatibility issues. ",
+      "Consider running FindVariableFeatures() before saving for better compatibility.\n",
+      "  Example: sce <- FindVariableFeatures(sce, selection.method = 'vst', nfeatures = 2000)"
+    )
   }
 
   # obs
