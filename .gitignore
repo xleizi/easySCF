@@ -12,3 +12,4 @@ test.py
 .claude
 
 *.h5
+*.rds
