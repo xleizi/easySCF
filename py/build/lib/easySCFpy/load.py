@@ -210,19 +210,22 @@ def read_h5_to_scanpy(
             layers = h5.get("assay", {}).get(assay, {}).get("layers", None)
             print("Reading X data")
             if layers is not None:
-                if "data" in layers.keys():
+                # 检查是否同时有 data 层和 var/var
+                has_data_layer = "data" in layers.keys()
+                has_var_var = "var" in h5["var"].keys()
+
+                if has_data_layer and has_var_var:
+                    # 标准情况：同时有 data 层和 var/var，加载标准化数据
                     data = h5_to_X(layers, "data", as_sparse, as_sparse_fmt, chunk_size)
                     rawData = h5_to_X(
                         layers, "rawdata", as_sparse, as_sparse_fmt, chunk_size
                     )
                     obs = read_dataframe_compat(h5["obs"])
-                    obs = obs if obs.shape[0] != 0 and obs.shape[1] != 0 else None
-                    # 检查 var/var 是否存在，不存在则回退到 var/rawvar
-                    if "var" in h5["var"].keys():
-                        var = read_dataframe_compat(h5["var/var"])
-                    else:
-                        var = read_dataframe_compat(h5["var/rawvar"])
-                    var = var if var.shape[0] != 0 and var.shape[1] != 0 else None
+                    # 只要有细胞（行），就保留 obs，即使没有元数据列（保留索引信息）
+                    obs = obs if obs.shape[0] != 0 else None
+                    var = read_dataframe_compat(h5["var/var"])
+                    # 只要有基因（行），就保留 var，即使没有元数据列（保留索引信息）
+                    var = var if var.shape[0] != 0 else None
                     adata = AnnData(
                         X=data,
                         obs=obs,
@@ -230,9 +233,11 @@ def read_h5_to_scanpy(
                     )
 
                     obs = read_dataframe_compat(h5["obs"])
-                    obs = obs if obs.shape[0] != 0 and obs.shape[1] != 0 else None
+                    # 只要有细胞（行），就保留 obs，即使没有元数据列（保留索引信息）
+                    obs = obs if obs.shape[0] != 0 else None
                     var = read_dataframe_compat(h5["var/rawvar"])
-                    var = var if var.shape[0] != 0 and var.shape[1] != 0 else None
+                    # 只要有基因（行），就保留 var，即使没有元数据列（保留索引信息）
+                    var = var if var.shape[0] != 0 else None
                     adata_raw = AnnData(
                         X=rawData,
                         obs=obs,
@@ -240,13 +245,20 @@ def read_h5_to_scanpy(
                     )
                     adata.raw = adata_raw
                 else:
+                    # 其他所有情况（无 data 或无 var/var）：只加载 rawdata
                     rawData = h5_to_X(
                         layers, "rawdata", as_sparse, as_sparse_fmt, chunk_size
                     )
+                    obs = read_dataframe_compat(h5["obs"])
+                    # 只要有细胞（行），就保留 obs，即使没有元数据列（保留索引信息）
+                    obs = obs if obs.shape[0] != 0 else None
+                    var = read_dataframe_compat(h5["var/rawvar"])
+                    # 只要有基因（行），就保留 var，即使没有元数据列（保留索引信息）
+                    var = var if var.shape[0] != 0 else None
                     adata = AnnData(
                         X=rawData,
-                        obs=read_dataframe_compat(h5["obs"]),
-                        var=read_dataframe_compat(h5["var/rawvar"]),
+                        obs=obs,
+                        var=var,
                     )
             else:
                 raise KeyError("Layers not found.")
