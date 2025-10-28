@@ -10,3 +10,5 @@ test.py
 
 # Claude Code 配置
 .claude
+
+*.h5
