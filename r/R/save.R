@@ -39,7 +39,7 @@ df_to_h5 <- function(h5data, df) {
     if (is.factor(df[[name]])) {
       h5data2 <- h5data$create_group(name)
       df[[name]] <- droplevels(df[[name]])
-      h5data2[["categories"]] <- levels(df[[name]])
+      h5CreateStringDataset(h5data2, "categories", levels(df[[name]]))
       h5AddAttribute(h5data2[["categories"]], "encoding-type", "string-array")
       h5AddAttribute(h5data2[["categories"]], "encoding-version", "0.2.0")
 
@@ -378,8 +378,8 @@ Seurat_to_H5 <- function(h5, sce, assay = "RNA",
   }
 
   # names
-  h5[["names_var"]] <- rownames(sce@assays[[assay]])
-  h5[["names_obs"]] <- colnames(sce@assays[[assay]])
+  h5CreateStringDataset(h5, "names_var", rownames(sce@assays[[assay]]))
+  h5CreateStringDataset(h5, "names_obs", colnames(sce@assays[[assay]]))
 
   print("Saving commands ...")
   if (length(sce@commands) > 0) {

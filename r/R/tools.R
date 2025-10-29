@@ -68,8 +68,17 @@ h5AddAttribute <- function(h5data, name, value) {
     h5data$create_attr(name, value, dtype = dtype, space = space)
 }
 
+h5CreateStringDataset <- function(h5group, name, value) {
+    # Create a UTF-8 encoded string datatype for string arrays
+    dtype <- hdf5r::H5T_STRING$new(type = "c", size = Inf)
+    dtype$set_cset("UTF-8")
+
+    # Create the dataset with UTF-8 encoding
+    h5group$create_dataset(name, value, dtype = dtype)
+}
+
 h5dfAddIndex <- function(h5data, df, indexName = "_index") {
-    h5data[[indexName]] <- rownames(df)
+    h5CreateStringDataset(h5data, indexName, rownames(df))
     h5AddAttribute(h5data[[indexName]], "encoding-type", "string-array")
     h5AddAttribute(h5data[[indexName]], "encoding-version", "0.2.0")
     # return(h5data)
